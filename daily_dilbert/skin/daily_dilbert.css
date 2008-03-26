@@ -1,0 +1,28 @@
+#daily_dilbert-panel {
+  list-style-image: url("chrome://daily_dilbert/skin/dilbert.png");
+}
+
+#daily_dilbert-panel[ddstatus="error"] {
+  list-style-image: url("chrome://daily_dilbert/skin/warning.png");
+}
+
+#bodyComicPopup {
+	overflow: hidden;
+	margin: 0px;
+	padding: 0px;
+}
+
+#comicform {
+	text-align: center;
+	font-family: Georgia, "Times New Roman", serif; 
+	font-size: 0.9em;
+	color: black;
+	margin: 0px;
+}
+
+#comicdiv {
+	text-align: center;
+	font-family: Georgia, "Times New Roman", serif; 
+	font-size: 0.9em;
+	color: black;
+}

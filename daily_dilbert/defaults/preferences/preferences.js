@@ -1,0 +1,15 @@
+pref('extensions.daily_dilbert.comic.site.current',0);
+pref('extensions.daily_dilbert.comic.site.count',12);
+pref('extensions.daily_dilbert.comic.site.0','dilbert[en]$$http://www.unitedmedia.com/$$comics/dilbert/index.html$$comic[\\w\\/\\.]*dilbert\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.1','dilbert[es]$$http://www.unitedmedia.com/$$spanish/dilbert/archive/index.html$$spanish[\\w\\/\\.]*dilbert\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.2','dilbert[cz]$$http://$$ekonomika.idnes.cz/dilbert.asp$$i\\.idnes\\.cz[\\w\\/\\.]+maxi[\\w\\/\\.]+_?dilb?[\\w_]*\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.3','dilbert[de]$$http://www.vdi-nachrichten.com/$$allgemein/dilbertshow.asp$$_library/dilbert/\\w+_\\w+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.4','dilbert[pl]$$http://$$praca.gazeta.pl/gazetapraca/0,74783.html$$bi\\.gazeta\\.pl[\\w\\/]*\\.(png|PNG)');
+pref('extensions.daily_dilbert.comic.site.5','peanuts[en]$$http://www.unitedmedia.com/comics/peanuts/archive/$$index.html$$images/peanuts\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.6','andycapp[en]$$http://www.comics.com/creators/andycapp/archive/$$index.html$$images/andycapp\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.7','getfuzzy[en]$$http://www.unitedmedia.com/comics/getfuzzy/archive/$$index.html$$images/getfuzzy\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.8','phdcomics[en]$$http://www.phdcomics.com/comics/$$archive.php$$archive/phd\\d+s\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.9','xkcd[en]$$http://$$www.xkcd.org/index.html$$imgs.xkcd.com/comics/[\w_]*.png');
+pref('extensions.daily_dilbert.comic.site.10','pearls[en]$$http://www.unitedmedia.com/comics/pearls/archive/$$index.html$$images/pearls\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
+pref('extensions.daily_dilbert.comic.site.11','dilbert[se]$$http://tjanster.idg.se/dilbertimages/dil<YYYY><MM><DD>.gif');
+pref('extensions.{C598822D-6E25-4ADB-9137-D52C050F315C}.description', '"chrome://daily_dilbert/locale/daily_dilbert.properties');

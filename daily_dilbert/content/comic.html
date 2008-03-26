@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+	<meta http-equiv="imagetoolbar" content="no"/>
+	<link rel="stylesheet" type="text/css" href="chrome://global/skin/global.css"/>
+	<link rel="stylesheet" type="text/css" href="chrome://daily_dilbert/skin/daily_dilbert.css"/>
+	<script type="text/javascript" src="chrome://daily_dilbert/content/daily_dilbert.js"></script>
+	<title>Daily Dilbert</title>
+</head>
+<body id="bodyComicPopup" onload="javascript:initPopupComic();">
+<a href="javascript:self.close();"><img id="comicimg" src="" border="0" alt=""/></a>
+<form id="comicform"><div id="comicdiv">Select comic to show: 
+&nbsp;<select id="comicselect" onchange="javascript:changePopupComicCurrent(this.options[this.selectedIndex].value);"></select>&nbsp;
+Click on image to close window</div></form>
+</body>
+</html>
