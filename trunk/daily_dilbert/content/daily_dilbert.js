@@ -46,6 +46,9 @@ var popupComicCount = 0;
 // current selected comic
 var popupComicCurrent = 0;
 
+// http_request handler
+var http_request = false;
+
 /********************************************************************
  * global event handler 											*
  * 																	*
@@ -259,7 +262,8 @@ function showDailyDilbert() {
 	http_request = new XMLHttpRequest();
 
 	if (http_request.overrideMimeType) {
-		http_request.overrideMimeType('text/xml');
+		//http_request.overrideMimeType('text/xml');
+		http_request.overrideMimeType('text/html');
 	}// if
 
 	if (!http_request) {
@@ -317,7 +321,7 @@ function openPopupComic() {
 				
 			} else if (popupComicSites[popupComicCurrent].length == 4) {
 			
-				logger(3, 'openPopupComic', 'extensions.daily_dilbert.openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
+				logger(3, 'openPopupComic', 'openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
 				
 				// parse for comics
 				var regexpr = new RegExp(popupComicSites[popupComicCurrent][3], 'g');
@@ -488,7 +492,7 @@ function logger(nLevel, sContext, msgID, altMsg) {
 		try {
 			sMsg = dailyDilbertLocalizer.GetStringFromName(dailyDilbertPrefix + msgID);
 		} catch (err) {
-			loggerNG(1, 'logger', '', 'Exception occurred. Original message was: '+ err);
+			logger(1, 'logger', '', 'Exception occurred. Original message was: '+ err );
 		}// try
 	}// if
 
