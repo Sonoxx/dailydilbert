@@ -13,7 +13,7 @@
 		em:name="Daily Dilbert"
 		em:creator="Arne Arnold"
  		em:id="{C598822D-6E25-4ADB-9137-D52C050F315C}"
-		em:version="2.1"
+		em:version="2.1.2"
 		em:description="Shows official Dilbert strip of the day"		
 		em:homepageURL="https://addons.mozilla.org/de/firefox/addon/3245"
  		em:optionsURL=""
