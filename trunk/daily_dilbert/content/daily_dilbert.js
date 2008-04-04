@@ -15,6 +15,10 @@ const popupComicChromeURL = 'chrome://daily_dilbert/content/comic.html';
 // url of proprties file
 const dailyDilbertPropURL = 'chrome://daily_dilbert/locale/daily_dilbert.properties'
 
+// max img dimensions window is resized to 
+const maxImageWidth = 800;
+const maxImageHeight = 600;
+		
 // statusbar icon
 var dailyDilbertIcon = false;
 
@@ -352,7 +356,7 @@ function openPopupComic() {
 				loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
 					'Open window for '+ imgurl);
 				popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
-						'Strip of the Day', 'chrome=no,centerscreen');
+						'Strip of the Day', 'scrollbars,chrome=no'); 
 			} else {
 				logger(1, 'openPopupComic', 'openPopupComic.imagurl.isnull', 'Image URL is null');
 				// as the popup wont open, user has no chance to select different comic
@@ -390,22 +394,28 @@ function initPopupComic() {
 	
 	logger(5, 'initPopupComic', 'generic.entermethod', 'enter method');
 
+	// get handler
 	popupComicImageObj = document.getElementById('comicimg');
 	popupComicDivObj = document.getElementById('comicdiv');
 
+	// set properties for image element
 	if (popupComicImageObj) {
 		popupComicImageObj.addEventListener('load', resizePopupComic, false);
 		popupComicImageObj.src = getQueryArg('imgSrc');
+		popupComicImageObj.title = '(c) '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2];
 	} else {
 		logger(1, 'initPopupComic',
 				'initPopupComic.isnull',
 				'Image can not be displayed due to missing image object in DOM');
 	}// if
 
+	// add available options to select-bar
 	var popupComicSelect = document.getElementById('comicselect');
 	for (var j=0; j < popupComicCount; j++) {
 		popupComicSelect.options[j] = new Option(popupComicSites[j][0],j);
 	}// for
+	
+	// make current comic to be selected
 	popupComicSelect.selectedIndex = popupComicCurrent;
 	
 	logger(5, 'initPopupComic', 'generic.leavemethod', 'leave method');
@@ -442,21 +452,30 @@ function resizePopupComic() {
 	logger(5, 'resizePopupComic', 'generic.entermethod', 'enter method');
 
 	if (popupComicImageObj) {
+		
+		// retrieve image dimensions
 		var imageWidth = popupComicImageObj.width;
 		var imageHeight = popupComicImageObj.height;
 		
-//		if (popupComicDivObj) {
-//			popupComicDivObj.style.width = imageWidth;
-//		}//if
+		// limit size of window
+		if ( imageWidth > maxImageWidth ) {
+			imageHeight = imageHeight * (maxImageWidth/imageWidth);
+			imageWidth = maxImageWidth;
+		}// if
+		if ( imageHeight > maxImageHeight ) {
+			imageWidth = imageWidth * (maxImageHeight/imageHeight);
+			imageHeight = maxImageHeight;
+		}// if
 		
-		var newx = (screen.availWidth / 2) - (imageWidth / 2);
-		var newy = (screen.availHeight / 2) - (imageHeight / 2);
-
 		// add 8 pixels to with and height for boundaries
 		// add 20 pixels to height for title bar
 		// add 35 pixels to height for select field		
 		window.resizeTo(imageWidth + 8, imageHeight +8 + 20 +35);
-		window.moveTo(newx, newy);
+
+		// center window  
+		//var newx = (screen.availWidth / 2) - (imageWidth / 2);
+		//var newy = (screen.availHeight / 2) - (imageHeight / 2);
+		//window.moveTo(newx, newy);
 	} else {
 		logger(1, 'resizePopupComic',
 				'resizePopupComic.isnull',
