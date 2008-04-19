@@ -261,24 +261,63 @@ function showDailyDilbert() {
 
 	if (!(popupComicCurrent >= 0))
 		popupComicCurrent = 0;
+		
+	// check what kind of pattern mode we have
+	// array of four elements -> regular expression is used to determine url of image
+	if (popupComicSites[popupComicCurrent].length == 4) {
+		
+		http_request = false;
+		http_request = new XMLHttpRequest();
+	
+		if (http_request.overrideMimeType) {
+			//http_request.overrideMimeType('text/xml');
+			http_request.overrideMimeType('text/html');
+		}// if
+	
+		if (!http_request) {
+			logger(1, 'showDailyDilbert', 'showDailyDilbert.httprequest.isnull', 'Cannot create XML/HTTP instance');
+			return;
+		}// if
+	
+		http_request.onreadystatechange = openPopupComic;
+		http_request.open('GET', popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2], true);
+		http_request.send(null);
 
-	http_request = false;
-	http_request = new XMLHttpRequest();
+	// array of three elements -> image is specified via timestamp
+	} else if (popupComicSites[popupComicCurrent].length == 2) {
+		
+		logger(3, 'openPopupComic', 'openPopupComic.imageurl.bytimesamp', 'Entering timestamp mode for URL determination');
+					
+		var curDate = new Date();
+		var curMonth = ((curDate.getMonth()+1) < 10) ? "0" + (curDate.getMonth()+ 1) : (curDate.getMonth()+ 1);
+		var curDay = (curDate.getDate() < 10) ? "0" + curDate.getDate() : curDate.getDate();
+		var curYear = curDate.getFullYear();
+		var curYearShort = Right(curYear, 2);
+		alert(curYearShort);
 
-	if (http_request.overrideMimeType) {
-		//http_request.overrideMimeType('text/xml');
-		http_request.overrideMimeType('text/html');
-	}// if
+		var imgurl = popupComicSites[popupComicCurrent][1];
+		alert(imgurl);
+		imgurl = imgurl.replace(/\<YYYY\>/g, curYear);
+		imgurl = imgurl.replace(/\<YY\>/g, curYearShort);
+		imgurl = imgurl.replace(/\<MM\>/g, curMonth);
+		imgurl = imgurl.replace(/\<DD\>/g, curDay);
 
-	if (!http_request) {
-		logger(1, 'showDailyDilbert', 'showDailyDilbert.httprequest.isnull', 'Cannot create XML/HTTP instance');
-		return;
-	}// if
-
-	http_request.onreadystatechange = openPopupComic;
-	http_request.open('GET', popupComicSites[popupComicCurrent][1]
-			+ popupComicSites[popupComicCurrent][2], true);
-	http_request.send(null);
+		alert(imgurl);
+		
+		// open window and append URL of comic as query string
+		loggerNG(4, 'showDailyDilbert', 'openPopupComic.openwindow', [imgurl],
+			'Open window for '+ imgurl);
+		popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
+			'Strip of the Day', 'scrollbars,chrome=no'); 
+		
+	} else {
+		
+		loggerNG(1, 'showDailyDilbert', 'openPopupComic.image.notfound', [popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]],
+			'No comic found at '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]);
+		popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=chrome://daily_dilbert/skin/no-picture.png',
+			'Strip of the Day', 'scrollbars,chrome=no'); 
+		
+	} // if liste != null
 
 	logger(5, 'showDailyDilbert', 'generic.leavemethod', 'leave method');
 
@@ -293,10 +332,6 @@ function showDailyDilbert() {
  *******************************************************************/
 function openPopupComic() {
 
-//	loggin disabled as method is called within loop when waiting for
-//	http-response to be finished -> spam log!	
-//	logger(5, 'openPopupComic', 'generic.entermethod', 'enter method');
-
 	if (http_request.readyState == 4) {
 
 		if (http_request.status == 200) {
@@ -305,66 +340,36 @@ function openPopupComic() {
 			var pagesource = http_request.responseText;
 
 			var imgurl = '';
-							
-			// check what kind of pattern mode we have
-			// array of two elements -> image is specified via timestamp
-			// array of four elements -> regular expression is used to determine url of image
-			if (popupComicSites[popupComicCurrent].length == 2) {
-				
-				logger(3, 'openPopupComic', 'openPopupComic.imageurl.bytimesamp', 'Entering timestamp mode for URL determination');
-							
-				var curDate = new Date();
-				var curMonth = ((curDate.getMonth()+1) < 10) ? "0" + (curDate.getMonth()+ 1) : (curDate.getMonth()+ 1);
-				var curDay = (curDate.getDate() < 10) ? "0" + curDate.getDate() : curDate.getDate();
-				var curYear = curDate.getFullYear();
 
-				imgurl = popupComicSites[popupComicCurrent][1];
-				imgurl = imgurl.replace(/\<YYYY\>/g, curYear);
-				imgurl = imgurl.replace(/\<MM\>/g, curMonth);
-				imgurl = imgurl.replace(/\<DD\>/g, curDay);
-				
-			} else if (popupComicSites[popupComicCurrent].length == 4) {
+			logger(3, 'openPopupComic', 'openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
 			
-				logger(3, 'openPopupComic', 'openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
-				
-				// parse for comics
-				var regexpr = new RegExp(popupComicSites[popupComicCurrent][3], 'g');
-				var liste = pagesource.match(regexpr);
+			// parse for comics
+			var regexpr = new RegExp(popupComicSites[popupComicCurrent][3], 'g');
+			var liste = pagesource.match(regexpr);
 
-				// check for result array (containing the url)
-				if (liste) {
+			// check for result array (containing the url)
+			if (liste) {
 
-					// be fault tolerant - if multiple matches occur, use the first match
-					if (liste.length == 1) {
-						imgurl = popupComicSites[popupComicCurrent][1] + liste;
-					} else if (liste.length > 1) {
-						imgurl = popupComicSites[popupComicCurrent][1] + liste[0];
-					}// if
-
-				} else {
-					loggerNG(1, 'openPopupComic', 'openPopupComic.image.notfound', [popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]],
-						'No comic found at '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]);
-				} // if liste != null
-			
-			} else {
-				loggerNG(1, 'openPopupComic', 'openPopupComic.property.mismatch', [popupComicCurrent],
-					'Unexpected number of elements in property: comic.site.'+ popupComicCurrent);
-			}// if popupComicSites.length
-
-			if ( imgurl != '' ) {
-				// open window and append URL of comic as query string
-				loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
-					'Open window for '+ imgurl);
-				popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
-						'Strip of the Day', 'scrollbars,chrome=no'); 
-			} else {
-				logger(1, 'openPopupComic', 'openPopupComic.imagurl.isnull', 'Image URL is null');
-				// as the popup wont open, user has no chance to select different comic
-				// hence we shift to another comic until we reached the first one
-				if (popupComicCurrent > 1) {
-					popupComicCurrent--;
+				// be fault tolerant - if multiple matches occur, use the first match
+				if (liste.length == 1) {
+					imgurl = popupComicSites[popupComicCurrent][1] + liste;
+				} else if (liste.length > 1) {
+					imgurl = popupComicSites[popupComicCurrent][1] + liste[0];
 				}// if
-			}// if imgurl
+
+			} // if liste != null
+			
+			if ( imgurl == '' ) {
+				loggerNG(1, 'openPopupComic', 'openPopupComic.image.notfound', [popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]],
+					'No comic found at '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]);
+				imgurl = 'chrome://daily_dilbert/skin/no-picture.png';
+			}// if
+
+			// open window and append URL of comic as query string
+			loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
+				'Open window for '+ imgurl);
+			popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
+					'Strip of the Day', 'scrollbars,chrome=no'); 
 
 		} else { // http_request.status != 200
 			
@@ -374,8 +379,6 @@ function openPopupComic() {
 			
 		}// if status == 200
 	}// if readyState == 4
-
-//	logger(5, 'openPopupComic', 'generic.leavemethod', 'leave method');
 
 }// openPopupComic
 
@@ -586,3 +589,29 @@ function parseQuery(query) {
 	return Params;
 
 }// parseQuery
+
+/**
+ * http://www.devx.com/tips/Tip/15222
+ */
+function Left(str, n){
+	if (n <= 0)
+	    return "";
+	else if (n > String(str).length)
+	    return str;
+	else
+	    return String(str).substring(0,n);
+}//Left
+
+/**
+ * http://www.devx.com/tips/Tip/15222
+ */
+function Right(str, n){
+    if (n <= 0)
+       return "";
+    else if (n > String(str).length)
+       return str;
+    else {
+       var iLen = String(str).length;
+       return String(str).substring(iLen, iLen - n);
+    }// if
+}// Right
