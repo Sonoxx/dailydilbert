@@ -15,5 +15,5 @@ pref('extensions.daily_dilbert.comic.site.10','pearls[en]$$http://www.unitedmedi
 pref('extensions.daily_dilbert.comic.site.11','dilbert[se]$$http://tjanster.idg.se/dilbertimages/dil<YYYY><MM><DD>.gif');
 pref('extensions.daily_dilbert.comic.site.12','opus[en]$$http://www.comics.com/wash/opus/archive/$$index.html$$images/opus\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
 pref('extensions.daily_dilbert.comic.site.13','nonsequitur[en]$$http://www.comics.com/creators/nonsequitur/archive/$$index.html$$images/nonsequitur\\d+\\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
-pref('extensions.daily_dilbert.comic.site.14','garfield[de]$$http://images.ucomics.com/comics/ga/<YYYY>/ga<YY><MM><DD>.gif');
+pref('extensions.daily_dilbert.comic.site.14','garfield[en]$$http://images.ucomics.com/comics/ga/<YYYY>/ga<YY><MM><DD>.gif');
 pref('extensions.{C598822D-6E25-4ADB-9137-D52C050F315C}.description','chrome://daily_dilbert/locale/daily_dilbert.properties');

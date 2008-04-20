@@ -293,16 +293,12 @@ function showDailyDilbert() {
 		var curDay = (curDate.getDate() < 10) ? "0" + curDate.getDate() : curDate.getDate();
 		var curYear = curDate.getFullYear();
 		var curYearShort = Right(curYear, 2);
-		alert(curYearShort);
 
 		var imgurl = popupComicSites[popupComicCurrent][1];
-		alert(imgurl);
 		imgurl = imgurl.replace(/\<YYYY\>/g, curYear);
 		imgurl = imgurl.replace(/\<YY\>/g, curYearShort);
 		imgurl = imgurl.replace(/\<MM\>/g, curMonth);
 		imgurl = imgurl.replace(/\<DD\>/g, curDay);
-
-		alert(imgurl);
 		
 		// open window and append URL of comic as query string
 		loggerNG(4, 'showDailyDilbert', 'openPopupComic.openwindow', [imgurl],
