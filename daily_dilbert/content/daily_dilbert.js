@@ -15,6 +15,10 @@ const popupComicChromeURL = 'chrome://daily_dilbert/content/comic.html';
 // url of proprties file
 const dailyDilbertPropURL = 'chrome://daily_dilbert/locale/daily_dilbert.properties'
 
+// popup window title
+const popupComicTitle = 'Strip of the day';
+const popupComicProperties = 'scrollbars,chrome=no';
+
 // max img dimensions window is resized to 
 const maxImageWidth = 800;
 const maxImageHeight = 600;
@@ -261,8 +265,19 @@ function showDailyDilbert() {
 
 	if (!(popupComicCurrent >= 0))
 		popupComicCurrent = 0;
-		
-	// check what kind of pattern mode we have
+
+//	document.body.style = 'cursor: wait';
+
+	//	if(popupComicWindow == null || popupComicWindow.closed) {
+//		popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=chrome://daily_dilbert/skin/wait.gif',
+//			popupComicTitle, popupComicProperties); 
+//	} else if(previousUrl != strUrl) {
+//		popupComicWindow.focus();
+//	} else {
+//		popupComicWindow.focus();
+//  	}
+
+  	// check what kind of pattern mode we have
 	// array of four elements -> regular expression is used to determine url of image
 	if (popupComicSites[popupComicCurrent].length == 4) {
 		
@@ -304,14 +319,15 @@ function showDailyDilbert() {
 		loggerNG(4, 'showDailyDilbert', 'openPopupComic.openwindow', [imgurl],
 			'Open window for '+ imgurl);
 		popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
-			'Strip of the Day', 'scrollbars,chrome=no'); 
+			popupComicTitle, popupComicProperties); 
+		popupComicWindow.focus();
 		
 	} else {
 		
 		loggerNG(1, 'showDailyDilbert', 'openPopupComic.image.notfound', [popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]],
 			'No comic found at '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]);
 		popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=chrome://daily_dilbert/skin/no-picture.png',
-			'Strip of the Day', 'scrollbars,chrome=no'); 
+			popupComicTitle, popupComicProperties); 
 		
 	} // if liste != null
 
@@ -364,9 +380,11 @@ function openPopupComic() {
 			// open window and append URL of comic as query string
 			loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
 				'Open window for '+ imgurl);
-			popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
-					'Strip of the Day', 'scrollbars,chrome=no'); 
 
+			popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
+					popupComicTitle, popupComicProperties); 
+			popupComicWindow.focus();
+			
 		} else { // http_request.status != 200
 			
 			loggerNG(1, 'openPopupComic', 'openPopupComic.http_request.failed', [http_request.status],
