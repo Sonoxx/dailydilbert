@@ -13,7 +13,7 @@
 		em:name="Daily Dilbert"
 		em:creator="Arne Arnold"
  		em:id="{C598822D-6E25-4ADB-9137-D52C050F315C}"
-		em:version="2.2"
+		em:version="2.3"
 		em:description="Shows official Dilbert strip of the day"		
 		em:homepageURL="http://code.google.com/p/dailydilbert/"
  		em:optionsURL=""
@@ -28,6 +28,6 @@
 	<RDF:Description RDF:about="rdf:#$QkNYY"
 		em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
 		em:minVersion="0.9"
-		em:maxVersion="3.0pre" />
+		em:maxVersion="3.0.*" />
 	         
 </RDF:RDF>
