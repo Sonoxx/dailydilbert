@@ -1,5 +1,13 @@
-/*
- * (c) arne arnold, march 2008
+/* 
+ * (c) arne arnold, November 2008
+ * v2.3.1
+ * 	applied patch by gortan
+ *  moved max width/max height into preferences
+ *  updated image urls as provided by stevelothspeich
+ *  allow resizing of pop-up
+ *  changed click behavior (forward to page instead of closing pop-up)
+ *  added userfriendly comic
+ * special thanks to stevelothspeich, and gortan for getting involved!
  */
 
 /********************************************************************
@@ -12,21 +20,25 @@ const dailyDilbertPrefix = 'extensions.daily_dilbert.';
 // url for popup template
 const popupComicChromeURL = 'chrome://daily_dilbert/content/comic.html';
 
-// url of proprties file
-const dailyDilbertPropURL = 'chrome://daily_dilbert/locale/daily_dilbert.properties'
+// url of properties file
+const dailyDilbertPropURL = 'chrome://daily_dilbert/locale/daily_dilbert.properties';
+
+// picture not found url
+const dailyDilbertNotFoundURL = 'chrome://daily_dilbert/skin/no-picture.png';
 
 // popup window title
 const popupComicTitle = 'Strip of the day';
-const popupComicProperties = 'scrollbars,chrome=no';
+const popupComicProperties = 'scrollbars,chrome=no,resizable=yes';
 
 // max img dimensions window is resized to 
-const maxImageWidth = 800;
-const maxImageHeight = 600;
+// will be initialized by properties (see line ~240)
+var maxImageWidth = 0;
+var maxImageHeight = 0;
 		
-// statusbar icon
+// status bar icon
 var dailyDilbertIcon = false;
 
-// status of (eventhandler) initialization
+// status of (event handler) initialization
 var dailyDilbertInitialized = false;
 
 // log writer
@@ -44,6 +56,7 @@ var popupComicWindow = null;
 // pointer to image and div tag containing comic strip
 var popupComicImageObj = null;
 var popupComicDivObj = null;
+var popupComicAnchorObj = null;
 
 // popup comic strips
 var popupComicSites = new Array();
@@ -82,7 +95,7 @@ var dailyDilbertPrefObserver = {
 	observe : function(aSubject, aTopic, aData) {
 		// aTopic is the event which has been occurred
 		// aSubject is the nsIPrefBranch we're observing (after appropriate QI)
-		// aData is the name of the pref that's been changed (relative to
+		// aData is the name of the preference that's been changed (relative to
 		// aSubject)
 		if (aTopic != 'nsPref:changed')
 			return;
@@ -103,8 +116,8 @@ var dailyDilbertPrefObserver = {
 /********************************************************************
  * initDailyDilbert()												*
  * 																	*
- * Initialize Main component, including Log, I18N and Pref Suport	*
- * Called by onLoad() eventhanlder of daily_dilbert.xul				*
+ * Initialize Main component, including Log, I18N and Pref Support	*
+ * Called by onLoad() event hanlder of daily_dilbert.xul			*
  ********************************************************************/
 function initDailyDilbert() {
 
@@ -212,7 +225,7 @@ function initDailyDilbertPreferences() {
 /********************************************************************
  * loadDailyDilbertPreferences										*
  * 																	*
- * load preferences from XUL persitence into memory					*
+ * load preferences from XUL persistence into memory				*
  * called by dailyDilbertPrefObserver() and initDailyDilbert()		*
  *******************************************************************/
 function loadDailyDilbertPreferences() {
@@ -228,12 +241,20 @@ function loadDailyDilbertPreferences() {
 
 	var prefKey = '';
 	try {
+		
+		// set max img dimensions window is resized to 
+		maxImageWidth = dailyDilbertPreferences
+			.getIntPref('popup.width.max');
+		maxImageHeight = dailyDilbertPreferences
+			.getIntPref('popup.height.max');
 
+		// set max and current comic index
 		popupComicCount = dailyDilbertPreferences
 				.getIntPref('comic.site.count');
 		popupComicCurrent = dailyDilbertPreferences
 				.getIntPref('comic.site.current');
 
+		// load array of comics 
 		for (var i = 0; i < popupComicCount; i++) {
 			popupComicSites[i] = dailyDilbertPreferences
 					.getCharPref('comic.site.' + i).split('$$');
@@ -251,13 +272,13 @@ function loadDailyDilbertPreferences() {
 
 
 /********************************************************************
- * showDailyDilbert()													*
+ * showDailyDilbert()												*
  * 																	*
- * This is the MAIN METHOD of the plugin which will be execute then *
- * the user left-clicks on the dilbert icon in the statusbar		*
+ * This is the MAIN METHOD of the plug-in which will be execute then*
+ * the user left-clicks on the dilbert icon in the status bar		*
  * Method then invoke HTTP request client and register 				*
  * openPopupComic() as call back function which is executed after	*
- * HTTP content is completly returned 								*
+ * HTTP content is completely returned 								*
  ********************************************************************/
 function showDailyDilbert() {
 
@@ -298,7 +319,7 @@ function showDailyDilbert() {
 		http_request.open('GET', popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2], true);
 		http_request.send(null);
 
-	// array of three elements -> image is specified via timestamp
+	// array of three elements -> image is specified via time stamp
 	} else if (popupComicSites[popupComicCurrent].length == 2) {
 		
 		logger(3, 'openPopupComic', 'openPopupComic.imageurl.bytimesamp', 'Entering timestamp mode for URL determination');
@@ -340,21 +361,21 @@ function showDailyDilbert() {
  * 																	*
  * method opens comic strip in new window after parsing the			*
  * specified / configured page. 									*
- * registered as callback function by showDailyDilbert()			*
+ * registered as call back function by showDailyDilbert()			*
  *******************************************************************/
 function openPopupComic() {
 
 	if (http_request.readyState == 4) {
+
+        var imgurl = '';
 
 		if (http_request.status == 200) {
 
 			// read external site
 			var pagesource = http_request.responseText;
 
-			var imgurl = '';
-
 			logger(3, 'openPopupComic', 'openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
-			
+
 			// parse for comics
 			var regexpr = new RegExp(popupComicSites[popupComicCurrent][3], 'g');
 			var liste = pagesource.match(regexpr);
@@ -370,28 +391,30 @@ function openPopupComic() {
 				}// if
 
 			} // if liste != null
-			
+
 			if ( imgurl == '' ) {
 				loggerNG(1, 'openPopupComic', 'openPopupComic.image.notfound', [popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]],
 					'No comic found at '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2]);
-				imgurl = 'chrome://daily_dilbert/skin/no-picture.png';
+				imgurl = dailyDilbertNotFoundURL;
 			}// if
 
-			// open window and append URL of comic as query string
-			loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
-				'Open window for '+ imgurl);
-
-			popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=' + imgurl,
-					popupComicTitle, popupComicProperties); 
-			popupComicWindow.focus();
-			
 		} else { // http_request.status != 200
 			
 			loggerNG(1, 'openPopupComic', 'openPopupComic.http_request.failed', [http_request.status],
 					'There was a problem with the request: '+ http_request.status);
-			return;
-			
+            imgurl = dailyDilbertNotFoundURL;
+
 		}// if status == 200
+
+        // open window and append URL of comic as query string
+        loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
+                 'Open window for '+ imgurl);
+
+        popupComicWindow = window.openDialog
+            (popupComicChromeURL + '?imgSrc=' + imgurl,
+             popupComicTitle, popupComicProperties);
+        popupComicWindow.focus();
+
 	}// if readyState == 4
 
 }// openPopupComic
@@ -402,7 +425,7 @@ function openPopupComic() {
  * method extracts image url from query string and load image 		*
  * dynamically into HTML, see http://forums.mozillazine.org/		*
  * viewtopic.php?p=185730&sid=1d3d8001ed90bb9b208e5553a02e83c0		*
- * Called by onLoad() eventhanlder of comic.xul						*
+ * Called by onLoad() event hanlder of comic.xul					*
  *******************************************************************/
 function initPopupComic() {
 
@@ -414,12 +437,16 @@ function initPopupComic() {
 	// get handler
 	popupComicImageObj = document.getElementById('comicimg');
 	popupComicDivObj = document.getElementById('comicdiv');
+	popupComicAnchorObj = document.getElementById('comichref');
 
 	// set properties for image element
-	if (popupComicImageObj) {
+	if (popupComicImageObj && popupComicAnchorObj) {
 		popupComicImageObj.addEventListener('load', resizePopupComic, false);
 		popupComicImageObj.src = getQueryArg('imgSrc');
 		popupComicImageObj.title = '(c) '+ popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2];
+		popupComicAnchorObj.href = popupComicSites[popupComicCurrent][1] + popupComicSites[popupComicCurrent][2];
+		//popupComicAnchorObj.target = '_blank';
+		
 	} else {
 		logger(1, 'initPopupComic',
 				'initPopupComic.isnull',
@@ -484,10 +511,10 @@ function resizePopupComic() {
 			imageHeight = maxImageHeight;
 		}// if
 		
-		// add 8 pixels to with and height for boundaries
+		// add 18 pixels to with and height for boundaries
 		// add 20 pixels to height for title bar
 		// add 35 pixels to height for select field		
-		window.resizeTo(imageWidth + 8, imageHeight +8 + 20 +35);
+		window.resizeTo(imageWidth + 18, imageHeight +18 + 20 +35);
 
 		// center window  
 		//var newx = (screen.availWidth / 2) - (imageWidth / 2);
