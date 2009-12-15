@@ -1,0 +1,9 @@
+content daily_dilbert	jar:chrome/daily_dilbert.jar!/content/
+
+overlay chrome://browser/content/browser.xul chrome://daily_dilbert/content/daily_dilbert.xul
+
+locale	daily_dilbert	en-US		jar:chrome/daily_dilbert.jar!/locale/en-US/
+
+skin	daily_dilbert	classic/1.0	jar:chrome/daily_dilbert.jar!/skin/
+
+style chrome://global/content/customizeToolbar.xul chrome://daily_dilbert/skin/daily_dilbert.css

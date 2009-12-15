@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  
+	<RDF:Description RDF:about="urn:mozilla:extension:file:daily_dilbert.jar">
+		<em:package>content/</em:package>
+		<em:locale>locale/en-US/</em:locale>
+		<em:skin>skin/</em:skin>
+	</RDF:Description>
+
+	<RDF:Description RDF:about="urn:mozilla:install-manifest"
+		em:name="Daily Dilbert"
+		em:creator="Arne Arnold"
+ 		em:id="{C598822D-6E25-4ADB-9137-D52C050F315C}"
+		em:version="2.5"
+		em:description="Shows official Dilbert strip of the day"		
+		em:homepageURL="http://code.google.com/p/dailydilbert/"
+ 		em:optionsURL=""
+ 		em:iconURL="chrome://daily_dilbert/skin/dilbert.png">
+		<!-- Firefox -->
+    	<em:targetApplication RDF:resource="rdf:#$QkNYY"/>
+    	<em:file RDF:resource="urn:mozilla:extension:file:daily_dilbert.jar"/>
+		<em:file RDF:resource="rdf:#$ZkNYY"/>
+  	</RDF:Description>
+  
+	<!-- Firefox -->
+	<RDF:Description RDF:about="rdf:#$QkNYY"
+		em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+		em:minVersion="0.9"
+		em:maxVersion="3.5.*" />
+	         
+</RDF:RDF>

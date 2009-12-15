@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://daily_dilbert/skin/daily_dilbert.css" type="text/css"?> 
+
+<!DOCTYPE overlay SYSTEM "chrome://daily_dilbert/locale/daily_dilbert.dtd">
+
+<overlay id="daily_dilbert-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<script type="application/x-javascript" src="chrome://daily_dilbert/content/daily_dilbert.js" />
+
+	<script language="JavaScript">
+		initDailyDilbert();
+	</script>
+
+	<statusbar id="status-bar">
+		<statusbarpanel	id="daily_dilbert-panel"
+			class="statusbarpanel-menu-iconic"
+			insertbefore="offline-status"
+			tooltiptext="&daily_dilbert.button.tooltip;"
+			context="daily_dilbert-context-menu"
+			onclick="if (event.button == 0) showDailyDilbert();"/>
+	</statusbar>
+</overlay>
