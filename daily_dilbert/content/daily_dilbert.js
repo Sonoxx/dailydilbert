@@ -134,12 +134,13 @@ de.arnoldmedia.myPackage = function(){
 	/********************************************************************
 	 * initDailyDilbert()												*
 	 * 																	*
-	 * @private 
+	 * public
+	 * called by daily_dilbert.xul 
 	 * @depends pub.dailyDilbertInitialized, pub.dailyDilbertLogger, pub.dailyDilbertLocalizer, pub.dailyDilbertPreferences, pub.dailyDilbertIcon
 	 * Initialize Main component, including Log, I18N and Pref Support	*
 	 * Called by onLoad() event hanlder of daily_dilbert.xul			*
 	 ********************************************************************/
-	function initDailyDilbert() {
+	pub.initDailyDilbert = function() {
 	
 		logger(5, 'initDailyDilbert', 'generic.entermethod', 'enter method');
 	
@@ -460,7 +461,7 @@ de.arnoldmedia.myPackage = function(){
 	pub.initPopupComic = function() {
 	
 		// initialize all services if called within popup (comic.xul)
-		initDailyDilbert();
+		pub.initDailyDilbert();
 		
 		logger(5, 'initPopupComic', 'generic.entermethod', 'enter method');
 	
