@@ -3,6 +3,7 @@ content daily_dilbert	jar:chrome/daily_dilbert.jar!/content/
 overlay chrome://browser/content/browser.xul chrome://daily_dilbert/content/daily_dilbert.xul
 
 locale	daily_dilbert	en-US		jar:chrome/daily_dilbert.jar!/locale/en-US/
+locale	daily_dilbert	de-DE		jar:chrome/daily_dilbert.jar!/locale/de-DE/
 
 skin	daily_dilbert	classic/1.0	jar:chrome/daily_dilbert.jar!/skin/
 
