@@ -124,7 +124,7 @@ de.arnoldmedia.myPackage = function(){
 					break;
 			}// switch
 		}// observe
-	}// dailyDilbertPrefObserver
+	};// dailyDilbertPrefObserver
 	
 	
 	/********************************************************************
@@ -140,7 +140,7 @@ de.arnoldmedia.myPackage = function(){
 	 * Initialize Main component, including Log, I18N and Pref Support	*
 	 * Called by onLoad() event hanlder of daily_dilbert.xul			*
 	 ********************************************************************/
-	pub.initDailyDilbert = function() {
+	pub.initDailyDilbert = function(){
 	
 		logger(5, 'initDailyDilbert', 'generic.entermethod', 'enter method');
 	
@@ -178,7 +178,7 @@ de.arnoldmedia.myPackage = function(){
 			try {
 				var oBundle = Components.classes['@mozilla.org/intl/stringbundle;1']
 						.getService(Components.interfaces.nsIStringBundleService);
-				pub.dailyDilbertLocalizer = oBundle.createBundle(dailyDilbertPropURL);
+				pub.dailyDilbertLocalizer = oBundle.createBundle(pub.dailyDilbertPropURL);
 			} catch (err) {
 				pub.dailyDilbertLocalizer = false;
 			}// try
@@ -197,7 +197,7 @@ de.arnoldmedia.myPackage = function(){
 	
 			try {
 				// register Preference Reader
-				pub.initDailyDilbertPreferences();
+				initDailyDilbertPreferences();
 			} catch (err) {
 				loggerNG(1, 'initDailyDilbert', 'generic.initiate.failed', ['dailyDilbertPreferences'],
 						'dailyDilbertPreferences could not be initiated');
@@ -208,7 +208,7 @@ de.arnoldmedia.myPackage = function(){
 			if (pub.dailyDilbertPreferences) {
 	
 				// load Preferences into memory
-				pub.loadDailyDilbertPreferences();
+				loadDailyDilbertPreferences();
 	
 				// listen to update of preferences
 				pub.dailyDilbertPrefObserver.register();
@@ -226,7 +226,7 @@ de.arnoldmedia.myPackage = function(){
 		loggerNG(3, 'initDailyDilbert', 'generic.initiate.ok', ['initDailyDilbert'], 'initDailyDilbert initiated');
 		logger(5, 'initDailyDilbert', 'generic.leavemethod', 'leave method');
 	
-	}// initDailyDilbert
+	};// initDailyDilbert
 	
 	/********************************************************************
 	 * initDailyDilbertPreferences										*
@@ -241,7 +241,7 @@ de.arnoldmedia.myPackage = function(){
 		// register Preference Reader
 		var prefService = Components.classes['@mozilla.org/preferences-service;1']
 				.getService(Components.interfaces.nsIPrefService);
-		pub.dailyDilbertPreferences = prefService.getBranch(dailyDilbertPrefix);
+		pub.dailyDilbertPreferences = prefService.getBranch(pub.dailyDilbertPrefix);
 	
 	}// initDailyDilbertPreferences
 	
@@ -306,10 +306,10 @@ de.arnoldmedia.myPackage = function(){
 	 * openPopupComic() as call back function which is executed after	*
 	 * HTTP content is completely returned 								*
 	 ********************************************************************/
-	pub.showDailyDilbert = function() {
+	pub.showDailyDilbert = function(){
 	
 		logger(5, 'showDailyDilbert', 'generic.entermethod', 'enter method');
-	
+			
 		if (!(pub.popupComicCurrent >= 0))
 			pub.popupComicCurrent = 0;
 	
@@ -342,11 +342,11 @@ de.arnoldmedia.myPackage = function(){
 			}// if
 		
 			pub.http_request.onreadystatechange = openPopupComic;
-			pub.http_request.open('GET', pub.popupComicSites[popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2], true);
+			pub.http_request.open('GET', pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2], true);
 			pub.http_request.send(null);
 	
 		// array of three elements -> image is specified via time stamp
-		} else if (pub.popupComicSites[popupComicCurrent].length == 2) {
+		} else if (pub.popupComicSites[pub.popupComicCurrent].length == 2) {
 			
 			logger(3, 'openPopupComic', 'openPopupComic.imageurl.bytimesamp', 'Entering timestamp mode for URL determination');
 						
@@ -356,7 +356,7 @@ de.arnoldmedia.myPackage = function(){
 			var curYear = curDate.getFullYear();
 			var curYearShort = Right(curYear, 2);
 	
-			var imgurl = pub.popupComicSites[popupComicCurrent][1];
+			var imgurl = pub.popupComicSites[pub.popupComicCurrent][1];
 			imgurl = imgurl.replace(/\<YYYY\>/g, curYear);
 			imgurl = imgurl.replace(/\<YY\>/g, curYearShort);
 			imgurl = imgurl.replace(/\<MM\>/g, curMonth);
@@ -371,8 +371,8 @@ de.arnoldmedia.myPackage = function(){
 			
 		} else {
 			
-			loggerNG(1, 'showDailyDilbert', 'openPopupComic.image.notfound', [pub.popupComicSites[popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2]],
-				'No comic found at '+ pub.popupComicSites[popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2]);
+			loggerNG(1, 'showDailyDilbert', 'openPopupComic.image.notfound', [pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]],
+				'No comic found at '+ pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]);
 			pub.popupComicWindow = window.openDialog(pub.popupComicChromeURL + '?imgSrc=chrome://daily_dilbert/skin/no-picture.png',
 					pub.popupComicTitle, pub.popupComicProperties); 
 			
@@ -380,7 +380,7 @@ de.arnoldmedia.myPackage = function(){
 	
 		logger(5, 'showDailyDilbert', 'generic.leavemethod', 'leave method');
 	
-	}// showDailyDilbert
+	};// showDailyDilbert
 	
 	/********************************************************************
 	 * openPopupComic()													*
@@ -405,7 +405,7 @@ de.arnoldmedia.myPackage = function(){
 				logger(3, 'openPopupComic', 'openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
 	
 				// parse for comics
-				var regexpr = new RegExp(pub.popupComicSites[popupComicCurrent][3], 'g');
+				var regexpr = new RegExp(pub.popupComicSites[pub.popupComicCurrent][3], 'g');
 				var liste = pagesource.match(regexpr);
 	
 				// check for result array (containing the url)
@@ -413,16 +413,16 @@ de.arnoldmedia.myPackage = function(){
 	
 					// be fault tolerant - if multiple matches occur, use the first match
 					if (liste.length == 1) {
-						imgurl = pub.popupComicSites[popupComicCurrent][1] + liste;
+						imgurl = pub.popupComicSites[pub.popupComicCurrent][1] + liste;
 					} else if (liste.length > 1) {
-						imgurl = pub.popupComicSites[popupComicCurrent][1] + liste[0];
+						imgurl = pub.popupComicSites[pub.popupComicCurrent][1] + liste[0];
 					}// if
 	
 				} // if liste != null
 	
 				if ( imgurl == '' ) {
-					loggerNG(1, 'openPopupComic', 'openPopupComic.image.notfound', [pub.popupComicSites[popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2]],
-						'No comic found at '+ pub.popupComicSites[popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2]);
+					loggerNG(1, 'openPopupComic', 'openPopupComic.image.notfound', [pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]],
+						'No comic found at '+ pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]);
 					imgurl = pub.dailyDilbertNotFoundURL;
 				}// if
 	
@@ -438,7 +438,7 @@ de.arnoldmedia.myPackage = function(){
 	        loggerNG(4, 'openPopupComic', 'openPopupComic.openwindow', [imgurl],
 	                 'Open window for '+ imgurl);
 	
-	        popupComicWindow = window.openDialog
+	        pub.popupComicWindow = window.openDialog
 	            (pub.popupComicChromeURL + '?imgSrc=' + imgurl,
 	            		pub.popupComicTitle, pub.popupComicProperties);
 	        pub.popupComicWindow.focus();
@@ -458,7 +458,7 @@ de.arnoldmedia.myPackage = function(){
 	 * viewtopic.php?p=185730&sid=1d3d8001ed90bb9b208e5553a02e83c0		*
 	 * Called by onLoad() event hanlder of comic.xul					*
 	 *******************************************************************/
-	pub.initPopupComic = function() {
+	pub.initPopupComic = function(){
 	
 		// initialize all services if called within popup (comic.xul)
 		pub.initDailyDilbert();
@@ -474,8 +474,8 @@ de.arnoldmedia.myPackage = function(){
 		if (pub.popupComicImageObj && pub.popupComicAnchorObj) {
 			pub.popupComicImageObj.addEventListener('load', resizePopupComic, false);
 			pub.popupComicImageObj.src = getQueryArg('imgSrc');
-			pub.popupComicImageObj.title = '(c) '+ pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2];
-			pub.popupComicAnchorObj.href = pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[popupComicCurrent][2];
+			pub.popupComicImageObj.title = '(c) '+ pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2];
+			pub.popupComicAnchorObj.href = pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2];
 			//popupComicAnchorObj.target = '_blank';
 			
 		} else {
@@ -495,7 +495,28 @@ de.arnoldmedia.myPackage = function(){
 		
 		logger(5, 'initPopupComic', 'generic.leavemethod', 'leave method');
 	
-	}// initPopupComic
+	};// initPopupComic
+	
+	/********************************************************************
+	 * saveCurrentPopupComic()											*
+	 * 																	*
+	 * @public
+	 * @depends pub.popupComicCurrent, pub.dailyDilbertPreferences
+	 * read curent selected item and save value to preferences			*
+	 *******************************************************************/
+	pub.changePopupComicCurrent = function(value){
+
+		logger(5, 'changePopupComicCurrent', 'generic.entermethod', 'enter method');
+
+		pub.popupComicCurrent = value*1;
+		
+		pub.dailyDilbertPreferences.setIntPref('comic.site.current', pub.popupComicCurrent );
+		
+		pub.showDailyDilbert();
+		
+		logger(5, 'changePopupComicCurrent', 'generic.leavemethod', 'leave method');
+
+	};// saveCurrentPopupComic
 	
 	/********************************************************************
 	 * resizePopupComic()													*
@@ -687,29 +708,3 @@ de.arnoldmedia.myPackage = function(){
 // close namespace package 
 	return pub;
 }();
-
-
-/********************************************************************
- ************** global helper function with attribute **************
- *******************************************************************/
-
-/********************************************************************
- * saveCurrentPopupComic()											*
- * 																	*
- * @public
- * @depends pub.popupComicCurrent, pub.dailyDilbertPreferences
- * read curent selected item and save value to preferences			*
- *******************************************************************/
-function changePopupComicCurrent(value) {
-
-	de.arnoldmedia.myPackage.logger(5, 'changePopupComicCurrent', 'generic.entermethod', 'enter method');
-
-	de.arnoldmedia.myPackage.popupComicCurrent = value*1;
-	
-	de.arnoldmedia.myPackage.dailyDilbertPreferences.setIntPref('comic.site.current', de.arnoldmedia.myPackage.popupComicCurrent );
-	
-	de.arnoldmedia.myPackage.showDailyDilbert();
-	
-	de.arnoldmedia.myPackage.logger(5, 'changePopupComicCurrent', 'generic.leavemethod', 'leave method');
-
-}// saveCurrentPopupComic
