@@ -10,9 +10,11 @@
 	<title>Daily Dilbert</title>
 </head>
 <body id="bodyComicPopup" onload="javascript:de.arnoldmedia.myPackage.initPopupComic();">
-<a id="comichref" href="javascript:self.close();"><img id="comicimg" src="" border="0" alt=""/></a>
-<form id="comicform"><div id="comicdiv">Select comic to show: 
+<form id="comicform"><div id="comicdiv">Select comic to show:&nbsp;
+<img id="chevron-rtl" src="chrome://global/skin/toolbar/chevron-rtl.gif" onclick="de.arnoldmedia.myPackage.changePopupComicCurrent('-');">
 &nbsp;<select id="comicselect" onchange="javascript:de.arnoldmedia.myPackage.changePopupComicCurrent(this.options[this.selectedIndex].value);"></select>&nbsp;
-Click on image to enlarge comic</div></form>
+<img id="chevron" src="chrome://global/skin/toolbar/chevron.gif" onclick="de.arnoldmedia.myPackage.changePopupComicCurrent('+');">
+&nbsp;Click on image to open original source</div></form>
+<a id="comichref" href="javascript:self.close();"><img id="comicimg" src="" border="0" alt=""/></a>
 </body>
 </html>
