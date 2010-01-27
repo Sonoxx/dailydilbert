@@ -1,11 +1,13 @@
 /* 
  * (c) arne arnold, January 2010
  * 
- *  v2.5
+ *  v2.6
  *  Respecting the JavaScript global namespace as stated ad
  *  http://blogger.ziesemer.com/2007/10/respecting-javascript-global-namespace.html
+ *  thanks to http://gamejumble.com for providing loading3.gif for free
+ *  document.getElementById('comicimg').setAttribute("src","chrome://global/skin/toolbar/loading3.gif");
  *  
- *  v2.2
+ *  v2.5
  * 	applied patch by gortan
  *  moved max width/max height into preferences
  *  updated image urls as provided by stevelothspeich
@@ -313,17 +315,6 @@ de.arnoldmedia.myPackage = function(){
 		if (!(pub.popupComicCurrent >= 0))
 			pub.popupComicCurrent = 0;
 	
-	//	document.body.style = 'cursor: wait';
-	
-		//	if(popupComicWindow == null || popupComicWindow.closed) {
-	//		popupComicWindow = window.openDialog(popupComicChromeURL + '?imgSrc=chrome://daily_dilbert/skin/wait.gif',
-	//			popupComicTitle, popupComicProperties); 
-	//	} else if(previousUrl != strUrl) {
-	//		popupComicWindow.focus();
-	//	} else {
-	//		popupComicWindow.focus();
-	//  	}
-	
 	  	// check what kind of pattern mode we have
 		// array of four elements -> regular expression is used to determine url of image
 		if (pub.popupComicSites[pub.popupComicCurrent].length == 4) {
@@ -344,12 +335,12 @@ de.arnoldmedia.myPackage = function(){
 			pub.http_request.onreadystatechange = openPopupComic;
 			pub.http_request.open('GET', pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2], true);
 			pub.http_request.send(null);
-	
+			
 		// array of three elements -> image is specified via time stamp
 		} else if (pub.popupComicSites[pub.popupComicCurrent].length == 2) {
 			
 			logger(3, 'openPopupComic', 'openPopupComic.imageurl.bytimesamp', 'Entering timestamp mode for URL determination');
-						
+			
 			var curDate = new Date();
 			var curMonth = ((curDate.getMonth()+1) < 10) ? "0" + (curDate.getMonth()+ 1) : (curDate.getMonth()+ 1);
 			var curDay = (curDate.getDate() < 10) ? "0" + curDate.getDate() : curDate.getDate();
@@ -367,6 +358,7 @@ de.arnoldmedia.myPackage = function(){
 				'Open window for '+ imgurl);
 			pub.popupComicWindow = window.openDialog(pub.popupComicChromeURL + '?imgSrc=' + imgurl,
 					pub.popupComicTitle, pub.popupComicProperties); 
+
 			pub.popupComicWindow.focus();
 			
 		} else {
@@ -375,6 +367,8 @@ de.arnoldmedia.myPackage = function(){
 				'No comic found at '+ pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]);
 			pub.popupComicWindow = window.openDialog(pub.popupComicChromeURL + '?imgSrc=chrome://daily_dilbert/skin/no-picture.png',
 					pub.popupComicTitle, pub.popupComicProperties); 
+
+			pub.popupComicWindow.focus();
 			
 		} // if liste != null
 	
@@ -394,8 +388,9 @@ de.arnoldmedia.myPackage = function(){
 	function openPopupComic() {
 	
 		if (pub.http_request.readyState == 4) {
-	
-	        var imgurl = '';
+	        
+			
+			var imgurl = '';
 	
 			if (pub.http_request.status == 200) {
 	
@@ -404,12 +399,16 @@ de.arnoldmedia.myPackage = function(){
 	
 				logger(3, 'openPopupComic', 'openPopupComic.imageurl.byregexpr', 'Entering regexpr mode for URL determination');
 	
+				logger(5, 'openPopupComic', '', 'parse html stream for regexpr pattern: '+ pub.popupComicSites[pub.popupComicCurrent][3] +'');
+				
 				// parse for comics
 				var regexpr = new RegExp(pub.popupComicSites[pub.popupComicCurrent][3], 'g');
 				var liste = pagesource.match(regexpr);
-	
+					
 				// check for result array (containing the url)
 				if (liste) {
+					
+					logger(5, 'openPopupComic', '', 'pattern matched '+ liste.length +' times.');
 	
 					// be fault tolerant - if multiple matches occur, use the first match
 					if (liste.length == 1) {
@@ -421,12 +420,22 @@ de.arnoldmedia.myPackage = function(){
 				} // if liste != null
 	
 				if ( imgurl == '' ) {
+					
+					logger(5, 'openPopupComic', '', 'no match, use '+ pub.dailyDilbertNotFoundURL +'');
+					
 					loggerNG(1, 'openPopupComic', 'openPopupComic.image.notfound', [pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]],
 						'No comic found at '+ pub.popupComicSites[pub.popupComicCurrent][1] + pub.popupComicSites[pub.popupComicCurrent][2]);
 					imgurl = pub.dailyDilbertNotFoundURL;
 				}// if
+				
+				// free memory
+				liste = null;
+				pagesource = null;
+				regexpr = null;
 	
 			} else { // http_request.status != 200
+				
+				logger(4, 'openPopupComic', '', 'html returned code was '+ pub.http_request.status );
 				
 				loggerNG(1, 'openPopupComic', 'openPopupComic.http_request.failed', [pub.http_request.status],
 						'There was a problem with the request: '+ pub.http_request.status);
@@ -441,10 +450,11 @@ de.arnoldmedia.myPackage = function(){
 	        pub.popupComicWindow = window.openDialog
 	            (pub.popupComicChromeURL + '?imgSrc=' + imgurl,
 	            		pub.popupComicTitle, pub.popupComicProperties);
+	        
 	        pub.popupComicWindow.focus();
-	
+			
 		}// if readyState == 4
-	
+						
 	}// openPopupComic
 	
 	/********************************************************************
@@ -507,12 +517,27 @@ de.arnoldmedia.myPackage = function(){
 	pub.changePopupComicCurrent = function(value){
 
 		logger(5, 'changePopupComicCurrent', 'generic.entermethod', 'enter method');
-
-		pub.popupComicCurrent = value*1;
+				
+		if (document.getElementById('bodyComicPopup'))
+			document.getElementById('bodyComicPopup').setAttribute("style","cursor:wait");
+		if (document.getElementById('comicimg'))
+			document.getElementById('comicimg').setAttribute("src","chrome://daily_dilbert/skin/loading40.gif");
 		
+		if (IsNumeric(value)) {
+			pub.popupComicCurrent = value*1;
+		} else if (value == '+') {
+			pub.popupComicCurrent++;
+		} else if (value == '-') {
+			pub.popupComicCurrent--;
+		} else {
+			pub.popupComicCurrent = 0;
+		}//IsNumeric
+	
 		pub.dailyDilbertPreferences.setIntPref('comic.site.current', pub.popupComicCurrent );
-		
 		pub.showDailyDilbert();
+		
+//		if (document.getElementById('bodyComicPopup'))
+//			document.getElementById('bodyComicPopup').setAttribute("style","cursor:default");
 		
 		logger(5, 'changePopupComicCurrent', 'generic.leavemethod', 'leave method');
 
@@ -568,6 +593,26 @@ de.arnoldmedia.myPackage = function(){
 	/********************************************************************
 	 ************************* helper functions *************************
 	 *******************************************************************/
+	
+	
+	/**
+	 * @private
+	 * check whether the details entered in a text field are numeric 
+	 * http://www.codetoad.com/javascript/isnumeric.asp
+	 */
+	function IsNumeric(sText){
+	   var ValidChars = "0123456789.";
+	   var IsNumber=true;
+	   var Char;
+	 
+	   for (i = 0; i < sText.length && IsNumber == true; i++){ 
+	      Char = sText.charAt(i); 
+	      if (ValidChars.indexOf(Char) == -1){
+	         IsNumber = false;
+	         }
+	      }
+	   return IsNumber;
+	}
 	
 	/**
 	 * @private

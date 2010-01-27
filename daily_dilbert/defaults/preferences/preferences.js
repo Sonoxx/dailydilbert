@@ -22,6 +22,3 @@ pref('extensions.daily_dilbert.comic.site.15','Pearls[en]$$http://$$comics.com/p
 pref('extensions.daily_dilbert.comic.site.16','PhD Comics[en]$$http://www.phdcomics.com/comics/$$archive.php$$archive/phd\d+s\.(png|PNG|jpg|JPG|gif|GIF|tif|TIF)');
 pref('extensions.daily_dilbert.comic.site.17','User Friendly[en]$$http://$$ars.userfriendly.org/cartoons/$$www.userfriendly.org/cartoons/archives/[\\w\\/\\.]*\\.gif');
 pref('extensions.daily_dilbert.comic.site.18','xkcd[en]$$http://$$www.xkcd.org/index.html$$imgs.xkcd.com/comics/[\w_]*.png');
-
-
-
